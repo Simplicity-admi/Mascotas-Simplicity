@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Registro de Mascotas — Mi Edificio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+  :root {
+    --cream: #FAF8F3;
+    --warm: #F2EDE3;
+    --border: #E2D9C8;
+    --text: #1C1917;
+    --muted: #78716C;
+    --accent: #2D5016;
+    --accent-light: #EBF2E1;
+    --accent-mid: #4A7C2F;
+    --danger: #C0392B;
+    --danger-light: #FDF0EF;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* Hero header */
+  .hero {
+    background: var(--accent);
+    padding: 3rem 1.5rem 5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 0%, rgba(255,255,255,0.07) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 100%, rgba(0,0,0,0.2) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-paw {
+    font-size: 2.8rem;
+    margin-bottom: 0.75rem;
+    display: block;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 0.5rem;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: #C8E6A0;
+  }
+  .hero p {
+    color: rgba(255,255,255,0.72);
+    font-size: 1rem;
+    font-weight: 300;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+
+  /* Main card floats over hero */
+  .main-wrap {
+    max-width: 580px;
+    margin: -2.5rem auto 3rem;
+    padding: 0 1rem;
+  }
+  .card {
+    background: #fff;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    overflow: hidden;
+  }
+
+  /* Step progress */
+  .progress-bar {
+    display: flex;
+    background: var(--warm);
+    border-bottom: 1px solid var(--border);
+  }
+  .progress-step {
+    flex: 1;
+    padding: 1rem 0.5rem;
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    position: relative;
+    transition: color 0.3s;
+  }
+  .progress-step::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: transparent;
+    transition: background 0.3s;
+  }
+  .progress-step.active { color: var(--accent); }
+  .progress-step.active::after { background: var(--accent); }
+  .progress-step.done { color: var(--accent-mid); }
+  .progress-step.done::after { background: var(--accent-mid); }
+  .step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    font-size: 0.65rem;
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+  .progress-step.done .step-num {
+    background: var(--accent-mid);
+    border-color: var(--accent-mid);
+    color: #fff;
+  }
+
+  /* Form sections */
+  .form-body { padding: 2rem 1.75rem; }
+  .section-label {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.25rem;
+    color: var(--text);
+    margin-bottom: 0.35rem;
+  }
+  .section-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    font-weight: 300;
+  }
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field.full { grid-column: 1 / -1; }
+  label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  input, select, textarea {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--cream);
+    color: var(--text);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent-mid);
+    box-shadow: 0 0 0 3px rgba(74,124,47,0.12);
+    background: #fff;
+  }
+  textarea { resize: vertical; min-height: 80px; }
+  select { cursor: pointer; }
+
+  /* Photo upload */
+  .photo-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-sm);
+    padding: 2rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    background: var(--cream);
+    position: relative;
+  }
+  .photo-zone:hover { border-color: var(--accent-mid); background: var(--accent-light); }
+  .photo-zone i { font-size: 2rem; color: var(--muted); display: block; margin-bottom: 0.5rem; }
+  .photo-zone p { font-size: 0.85rem; color: var(--muted); }
+  .photo-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+  .photo-preview {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    display: none;
+    border: 1px solid var(--border);
+  }
+  .photo-reset {
+    display: none;
+    margin-top: 8px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 5px 14px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .photo-reset:hover { background: var(--danger-light); border-color: var(--danger); color: var(--danger); }
+
+  /* Vaccines */
+  .vaccine-item {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 8px;
+    align-items: end;
+    margin-bottom: 10px;
+    animation: fadeIn 0.25s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+  .btn-remove {
+    width: 38px; height: 38px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: none;
+    cursor: pointer;
+    color: var(--muted);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .btn-remove:hover { background: var(--danger-light); border-color: var(--danger); color: var(--danger); }
+  .btn-add-vacc {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius-sm);
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    color: var(--muted);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    transition: all 0.15s;
+    margin-top: 4px;
+  }
+  .btn-add-vacc:hover { border-color: var(--accent-mid); color: var(--accent); background: var(--accent-light); }
+
+  /* Divider */
+  .divider { height: 1px; background: var(--border); margin: 1.75rem 0; }
+
+  /* Navigation buttons */
+  .form-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.75rem;
+    border-top: 1px solid var(--border);
+    background: var(--warm);
+    gap: 12px;
+  }
+  .btn-back {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.7rem 1.25rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--muted);
+    cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.15s;
+  }
+  .btn-back:hover { background: #fff; color: var(--text); border-color: #ccc; }
+  .btn-next {
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1.75rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #fff;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
+    transition: all 0.15s;
+    margin-left: auto;
+  }
+  .btn-next:hover { background: var(--accent-mid); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(45,80,22,0.25); }
+  .btn-next:active { transform: translateY(0); }
+
+  /* Success screen */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 3rem 2rem;
+  }
+  .success-icon {
+    width: 72px; height: 72px;
+    background: var(--accent-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2rem;
+    color: var(--accent);
+  }
+  .success-screen h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.7rem;
+    margin-bottom: 0.5rem;
+  }
+  .success-screen p { color: var(--muted); font-size: 0.95rem; margin-bottom: 2rem; }
+  .btn-new {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1.75rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-new:hover { background: var(--accent-mid); }
+
+  /* Step visibility */
+  .step-panel { display: none; }
+  .step-panel.active { display: block; }
+
+  /* Required asterisk */
+  .req { color: var(--accent-mid); margin-left: 2px; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1C1917;
+    color: #fff;
+    padding: 12px 22px;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Footer */
+  .page-footer {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--muted);
+    padding: 0 1rem 2.5rem;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 480px) {
+    .field-grid { grid-template-columns: 1fr; }
+    .field.full { grid-column: 1; }
+    .form-body { padding: 1.5rem 1.25rem; }
+    .vaccine-item { grid-template-columns: 1fr auto; }
+    .vaccine-item .field:nth-child(2) { grid-column: 1; }
+    .hero { padding: 2.5rem 1rem 4.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="hero-paw">🐾</span>
+  <h1>Registro de<br/><em>Mascotas</em></h1>
+  <p>Completa el formulario para inscribir a tu mascota en el directorio del edificio.</p>
+</div>
+
+<div class="main-wrap">
+  <div class="card">
+
+    <!-- Progress -->
+    <div class="progress-bar">
+      <div class="progress-step active" id="pstep1">
+        <div><div class="step-num">1</div></div>
+        <div>Tus datos</div>
+      </div>
+      <div class="progress-step" id="pstep2">
+        <div><div class="step-num">2</div></div>
+        <div>Tu mascota</div>
+      </div>
+      <div class="progress-step" id="pstep3">
+        <div><div class="step-num">3</div></div>
+        <div>Salud</div>
+      </div>
+    </div>
+
+    <!-- Success screen -->
+    <div class="success-screen" id="success-screen">
+      <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+      <h2>¡Registro enviado!</h2>
+      <p id="success-msg">Tu mascota ha sido registrada correctamente. La administración revisará la información.</p>
+      <button class="btn-new" onclick="resetAll()">
+        <i class="fa-solid fa-plus"></i> Registrar otra mascota
+      </button>
+    </div>
+
+    <!-- STEP 1: Residente -->
+    <div class="step-panel active" id="panel1">
+      <div class="form-body">
+        <p class="section-label">Tus datos</p>
+        <p class="section-desc">Cuéntanos quién eres y dónde vives en el edificio.</p>
+        <div class="field-grid">
+          <div class="field full">
+            <label>Nombre completo <span class="req">*</span></label>
+            <input type="text" id="owner-name" placeholder="Ej: María García" autocomplete="name"/>
+          </div>
+          <div class="field">
+            <label>Apartamento <span class="req">*</span></label>
+            <input type="text" id="apt" placeholder="Ej: 4B"/>
+          </div>
+          <div class="field">
+            <label>Torre / Bloque</label>
+            <input type="text" id="tower" placeholder="Ej: Torre A"/>
+          </div>
+          <div class="field">
+            <label>Piso</label>
+            <input type="text" id="floor" placeholder="Ej: 3"/>
+          </div>
+          <div class="field">
+            <label>Teléfono <span class="req">*</span></label>
+            <input type="tel" id="phone" placeholder="987 654 321" autocomplete="tel"/>
+          </div>
+          <div class="field full">
+            <label>Correo electrónico</label>
+            <input type="email" id="email" placeholder="correo@email.com" autocomplete="email"/>
+          </div>
+        </div>
+      </div>
+      <div class="form-nav">
+        <span style="font-size:0.78rem;color:var(--muted);"><span style="color:var(--accent-mid);">*</span> Campos obligatorios</span>
+        <button class="btn-next" onclick="goStep(2)">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Mascota -->
+    <div class="step-panel" id="panel2">
+      <div class="form-body">
+        <p class="section-label">Tu mascota</p>
+        <p class="section-desc">Cuéntanos sobre ella: cómo se llama, qué es y cómo luce.</p>
+        <div class="field-grid">
+          <div class="field">
+            <label>Nombre <span class="req">*</span></label>
+            <input type="text" id="pet-name" placeholder="Ej: Luna"/>
+          </div>
+          <div class="field">
+            <label>Especie <span class="req">*</span></label>
+            <select id="species">
+              <option value="">Seleccionar...</option>
+              <option>Perro</option>
+              <option>Gato</option>
+              <option>Ave</option>
+              <option>Conejo</option>
+              <option>Hámster</option>
+              <option>Reptil</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Raza</label>
+            <input type="text" id="breed" placeholder="Ej: Golden Retriever"/>
+          </div>
+          <div class="field">
+            <label>Edad</label>
+            <input type="text" id="age" placeholder="Ej: 2 años"/>
+          </div>
+          <div class="field">
+            <label>Color / descripción</label>
+            <input type="text" id="color" placeholder="Ej: Dorado, pelaje largo"/>
+          </div>
+          <div class="field">
+            <label>Sexo</label>
+            <select id="gender">
+              <option value="">Seleccionar...</option>
+              <option>Macho</option>
+              <option>Hembra</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label>Foto de la mascota</label>
+            <div class="photo-zone" id="photo-zone">
+              <i class="fa-solid fa-camera"></i>
+              <p>Toca aquí para subir una foto</p>
+              <p style="font-size:0.75rem;margin-top:4px;opacity:0.6;">JPG, PNG · Máx. 5MB</p>
+              <input type="file" id="photo-input" accept="image/*" onchange="handlePhoto(this)"/>
+            </div>
+            <img class="photo-preview" id="photo-preview" alt="Foto de tu mascota"/>
+            <button class="photo-reset" id="photo-reset" onclick="resetPhoto()">
+              <i class="fa-solid fa-xmark"></i> Cambiar foto
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="form-nav">
+        <button class="btn-back" onclick="goStep(1)"><i class="fa-solid fa-arrow-left"></i> Atrás</button>
+        <button class="btn-next" onclick="goStep(3)">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Salud -->
+    <div class="step-panel" id="panel3">
+      <div class="form-body">
+        <p class="section-label">Salud y vacunas</p>
+        <p class="section-desc">Esta información nos ayuda a garantizar la convivencia segura en el edificio.</p>
+
+        <div id="vaccine-list"></div>
+        <button class="btn-add-vacc" onclick="addVaccine()">
+          <i class="fa-solid fa-plus"></i> Agregar vacuna
+        </button>
+
+        <div class="divider"></div>
+
+        <div class="field-grid">
+          <div class="field">
+            <label>Veterinario / Clínica</label>
+            <input type="text" id="vet" placeholder="Ej: VetPet Lima"/>
+          </div>
+          <div class="field">
+            <label>Teléfono veterinario</label>
+            <input type="tel" id="vet-phone" placeholder="Ej: 01 234 5678"/>
+          </div>
+          <div class="field full">
+            <label>Condiciones / Alergias</label>
+            <textarea id="conditions" placeholder="Enfermedades crónicas, alergias, medicamentos actuales..."></textarea>
+          </div>
+          <div class="field full">
+            <label>Notas para la administración</label>
+            <textarea id="notes" placeholder="Comportamiento, información relevante para el edificio..."></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="form-nav">
+        <button class="btn-back" onclick="goStep(2)"><i class="fa-solid fa-arrow-left"></i> Atrás</button>
+        <button class="btn-next" onclick="submitForm()" style="background:var(--accent-mid);">
+          <i class="fa-solid fa-paper-plane"></i> Enviar registro
+        </button>
+      </div>
+    </div>
+
+  </div><!-- .card -->
+
+  <p class="page-footer" style="margin-top:1.5rem;">
+    Tus datos son usados únicamente por la administración del edificio.
+  </p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let photoData = '';
+  let vaccineCount = 0;
+  let currentStep = 1;
+
+  function goStep(n) {
+    if (n > currentStep) {
+      if (currentStep === 1) {
+        if (!v('owner-name') || !v('apt') || !v('phone')) {
+          showToast('Por favor completa los campos obligatorios');
+          return;
+        }
+      }
+      if (currentStep === 2) {
+        if (!v('pet-name') || !document.getElementById('species').value) {
+          showToast('Completa el nombre y especie de tu mascota');
+          return;
+        }
+      }
+    }
+    for (let i = 1; i <= 3; i++) {
+      document.getElementById('panel' + i).classList.toggle('active', i === n);
+      const ps = document.getElementById('pstep' + i);
+      ps.className = 'progress-step' + (i === n ? ' active' : i < n ? ' done' : '');
+      if (i < n) ps.querySelector('.step-num').innerHTML = '<i class="fa-solid fa-check" style="font-size:0.6rem;"></i>';
+      else ps.querySelector('.step-num').textContent = i;
+    }
+    currentStep = n;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function v(id) { return document.getElementById(id).value.trim(); }
+
+  function handlePhoto(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { showToast('La imagen es demasiado grande (máx. 5MB)'); return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+      photoData = e.target.result;
+      document.getElementById('photo-preview').src = photoData;
+      document.getElementById('photo-preview').style.display = 'block';
+      document.getElementById('photo-zone').style.display = 'none';
+      document.getElementById('photo-reset').style.display = 'inline-flex';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function resetPhoto() {
+    photoData = '';
+    document.getElementById('photo-preview').style.display = 'none';
+    document.getElementById('photo-zone').style.display = 'block';
+    document.getElementById('photo-reset').style.display = 'none';
+    document.getElementById('photo-input').value = '';
+  }
+
+  function addVaccine() {
+    vaccineCount++;
+    const id = vaccineCount;
+    const div = document.createElement('div');
+    div.className = 'vaccine-item';
+    div.id = 'vrow' + id;
+    div.innerHTML = `
+      <div class="field">
+        <label>Vacuna</label>
+        <input type="text" id="vname${id}" placeholder="Ej: Antirrábica"/>
+      </div>
+      <div class="field">
+        <label>Fecha de aplicación</label>
+        <input type="date" id="vdate${id}"/>
+      </div>
+      <button class="btn-remove" onclick="document.getElementById('vrow${id}').remove()" aria-label="Eliminar">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    `;
+    document.getElementById('vaccine-list').appendChild(div);
+  }
+
+  function getVaccines() {
+    const rows = document.querySelectorAll('[id^="vrow"]');
+    const result = [];
+    rows.forEach(row => {
+      const id = row.id.replace('vrow', '');
+      const name = document.getElementById('vname' + id)?.value.trim();
+      const date = document.getElementById('vdate' + id)?.value;
+      if (name) result.push({ name, date: date || '' });
+    });
+    return result;
+  }
+
+  function submitForm() {
+    const record = {
+      id: Date.now(),
+      fechaRegistro: new Date().toLocaleDateString('es-PE', { day:'2-digit', month:'2-digit', year:'numeric' }),
+      nombreDueno: v('owner-name'),
+      apartamento: v('apt'),
+      torre: v('tower'),
+      piso: v('floor'),
+      telefono: v('phone'),
+      email: v('email'),
+      nombreMascota: v('pet-name'),
+      especie: document.getElementById('species').value,
+      raza: v('breed'),
+      edad: v('age'),
+      color: v('color'),
+      sexo: document.getElementById('gender').value,
+      foto: photoData,
+      vacunas: getVaccines(),
+      veterinario: v('vet'),
+      telefonoVeterinario: v('vet-phone'),
+      condiciones: v('conditions'),
+      notas: v('notes')
+    };
+
+    // Save to localStorage
+    const KEY = 'edificio_mascotas_residentes';
+    try {
+      const existing = JSON.parse(localStorage.getItem(KEY) || '[]');
+      existing.push(record);
+      localStorage.setItem(KEY, JSON.stringify(existing));
+    } catch(e) {}
+
+    // Show success
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('success-screen').style.display = 'block';
+    document.getElementById('success-msg').textContent =
+      `¡${record.nombreMascota} ha sido registrado/a correctamente! La administración revisará la información pronto.`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function resetAll() {
+    ['owner-name','apt','tower','floor','phone','email','pet-name','breed','age','color','vet','vet-phone','conditions','notes'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    document.getElementById('species').value = '';
+    document.getElementById('gender').value = '';
+    document.getElementById('vaccine-list').innerHTML = '';
+    vaccineCount = 0;
+    resetPhoto();
+    document.getElementById('success-screen').style.display = 'none';
+    currentStep = 1;
+    goStep(1);
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+</script>
+</body>
+</html>
