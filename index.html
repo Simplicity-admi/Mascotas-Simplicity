@@ -14,9 +14,9 @@
     --border: #E2D9C8;
     --text: #1C1917;
     --muted: #78716C;
-    --accent: #2D5016;
-    --accent-light: #EBF2E1;
-    --accent-mid: #4A7C2F;
+    --accent: #5B8DB8;
+    --accent-light: #EAF2FB;
+    --accent-mid: #7AAFD4;
     --danger: #C0392B;
     --danger-light: #FDF0EF;
     --radius: 14px;
@@ -41,7 +41,7 @@
   }
   .hero-paw { font-size: 2.8rem; margin-bottom: 0.75rem; display: block; }
   .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(1.8rem, 5vw, 2.8rem); color: #fff; line-height: 1.15; margin-bottom: 0.5rem; }
-  .hero h1 em { font-style: italic; color: #C8E6A0; }
+  .hero h1 em { font-style: italic; color: #C8E0F4; }
   .hero p { color: rgba(255,255,255,0.72); font-size: 1rem; font-weight: 300; max-width: 380px; margin: 0 auto; }
 
   .main-wrap { max-width: 580px; margin: -2.5rem auto 3rem; padding: 0 1rem; }
@@ -178,16 +178,24 @@
             <input type="text" id="owner-name" placeholder="Ej: María García" autocomplete="name"/>
           </div>
           <div class="field">
-            <label>Apartamento <span class="req">*</span></label>
-            <input type="text" id="apt" placeholder="Ej: 4B"/>
+            <label>Departamento <span class="req">*</span></label>
+            <input type="text" id="apt" placeholder="Ej: 201"/>
           </div>
           <div class="field">
-            <label>Torre / Bloque</label>
-            <input type="text" id="tower" placeholder="Ej: Torre A"/>
+            <label>Etapa</label>
+            <input type="text" id="etapa" placeholder="Ej: Etapa 1"/>
           </div>
           <div class="field">
             <label>Piso</label>
             <input type="text" id="floor" placeholder="Ej: 3"/>
+          </div>
+          <div class="field">
+            <label>Condición <span class="req">*</span></label>
+            <select id="resident-type">
+              <option value="">Seleccionar...</option>
+              <option>Propietario</option>
+              <option>Inquilino</option>
+            </select>
           </div>
           <div class="field">
             <label>Teléfono <span class="req">*</span></label>
@@ -319,7 +327,7 @@
   function goStep(n) {
     if (n > currentStep) {
       if (currentStep === 1) {
-        if (!v('owner-name') || !v('apt') || !v('phone')) {
+        if (!v('owner-name') || !v('apt') || !v('phone') || !document.getElementById('resident-type').value) {
           showToast('Por favor completa los campos obligatorios');
           return;
         }
@@ -401,9 +409,10 @@
 
     const record = {
       fechaRegistro: new Date().toLocaleDateString('es-PE', { day:'2-digit', month:'2-digit', year:'numeric' }),
+      condicion: document.getElementById('resident-type').value,
       nombreDueno: v('owner-name'),
-      apartamento: v('apt'),
-      torre: v('tower'),
+      departamento: v('apt'),
+      torre: v('etapa'),
       piso: v('floor'),
       telefono: v('phone'),
       email: v('email'),
@@ -443,9 +452,10 @@
   }
 
   function resetAll() {
-    ['owner-name','apt','tower','floor','phone','email','pet-name','breed','age','color','vet','vet-phone','conditions','notes']
+    ['owner-name','apt','etapa','floor','phone','email','pet-name','breed','age','color','vet','vet-phone','conditions','notes']
       .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
     document.getElementById('species').value = '';
+    document.getElementById('resident-type').value = '';
     document.getElementById('gender').value = '';
     document.getElementById('vaccine-list').innerHTML = '';
     vaccineCount = 0;
